@@ -10,6 +10,7 @@ extern crate toml;
 extern crate gtk;
 
 mod config;
+mod db;
 mod errors;
 mod logging;
 mod model;
