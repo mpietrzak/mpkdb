@@ -12,7 +12,7 @@ pub struct Error {
     desc: String
 }
 
-trait ErrorChain: std::error::Error {
+pub trait ErrorChain: std::error::Error {
 }
 
 impl fmt::Display for Error {
