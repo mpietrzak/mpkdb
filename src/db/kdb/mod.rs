@@ -1,6 +1,6 @@
 
 //! KDB file support.
 
-mod db;
+pub mod db;
 mod parser;
 

@@ -1,5 +1,5 @@
 
 //! DB stuff.
 
-mod api;
-mod kdb;
+pub mod api;
+pub mod kdb;

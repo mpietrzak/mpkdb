@@ -77,7 +77,15 @@ named!(kdb_file<KdbFile>, do_parse!(
 /// Parse Kdb file.
 pub fn parse_kdb_file(bytes: &[u8]) -> Result<KdbFile, Error> {
     let r = kdb_file(bytes);
-    debug!("parse_kdb_file: result: {:?}", r);
-    Err(Error{desc: String::from("not implemented yet")})
+    match r {
+        nom::IResult::Done(_, o) => Ok(o),
+        nom::IResult::Error(e) => {
+            error!("Failed to parse: {}", e);
+            Err(Error{desc: format!("Parse error: {}", e)})
+        }
+        nom::IResult::Incomplete(i) => {
+            Err(Error{desc: format!("Parse error - incomplete input: {:?}", i)})
+        }
+    }
 }
 

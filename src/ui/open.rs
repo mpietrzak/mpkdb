@@ -17,8 +17,8 @@ pub fn init_open_file_ui<F: Fn(String) + 'static>(window: &gtk::Window, old_file
             debug!("init_open_file_ui: Choose file button clicked: {:?}", x);
             let dialog = gtk::FileChooserDialog::new(None, Some(&parent), gtk::FileChooserAction::Open);
             dialog.add_buttons(&[
+                               ("Cancel", gtk::ResponseType::Cancel.into()),
                                ("Open", gtk::ResponseType::Ok.into()),
-                               ("Cancel", gtk::ResponseType::Cancel.into())
             ]);
             let result = dialog.run();
             debug!("init_open_file_ui: Result of running file chooser dialog: {:?}", result);
@@ -51,9 +51,17 @@ pub fn init_open_file_ui<F: Fn(String) + 'static>(window: &gtk::Window, old_file
     } else {
         open_btn.set_sensitive(false);
     }
-    open_btn.connect_clicked(move |_| {
-        callback(String::new())
-    });
+    {
+        let current_file_label_clone = current_file_label.clone();
+        open_btn.connect_clicked(move |_| {
+            match current_file_label_clone.get_text() {
+                Some(p) => callback(p),
+                None => {
+                    warn!("No text in label, can't open file");
+                }
+            }
+        });
+    }
     main_box.add(&file_box);
     main_box.add(&entry);
     main_box.add(&open_btn);

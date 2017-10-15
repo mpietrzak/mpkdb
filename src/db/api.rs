@@ -21,8 +21,6 @@ impl std::error::Error for Error {
 }
 
 /// What our app can handle as the password db.
-pub trait PasswordDatabase: std::marker::Sized + std::fmt::Debug {
-    fn open(path: &str) -> Result<Self, Error>;
-    fn close(&self);
+pub trait PasswordDatabase: std::fmt::Debug {
 }
 
