@@ -6,7 +6,7 @@ extern crate log;
 extern crate serde_derive;
 extern crate serde;
 extern crate toml;
-
+extern crate time;
 extern crate gtk;
 
 mod config;
@@ -20,7 +20,7 @@ use gtk::prelude::*;
 use gtk::{Window, WindowType};
 
 fn main() {
-    logging::init_logger();
+    logging::env_logger_init();
     debug!("hello, world");
     if gtk::init().is_err() {
         println!("Failed to initialize GTK.");
@@ -30,7 +30,7 @@ fn main() {
     let window = Window::new(WindowType::Toplevel);
     window.set_title("mpkdb");
     // window.set_default_size(350, 70);
-    ui::open::init_open_file_ui(&window, |s| {
+    ui::open::init_open_file_ui(&window, None, |s| {
         debug!("About to open \"{}\"...", s);
     });
     window.connect_delete_event(|_, _| {
