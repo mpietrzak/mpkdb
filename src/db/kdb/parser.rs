@@ -43,12 +43,22 @@ pub struct KdbHeader {
     signature_2: u32,
     flags: u32,
     version: u32,
+    master_seed: [u8;16],
+    enc_iv: [u8;16],
+    group_count: u32,
+    entry_count: u32,
 }
 
 #[derive(Debug)]
 pub struct KdbFile {
     header: KdbHeader,
 }
+
+named!(take_u8_16<[u8;16]>, map!(take!(16), |s| {
+    let mut a: [u8; 16] = [0; 16];
+    a.copy_from_slice(s);
+    a
+}));
 
 named!(
     kdb_header<KdbHeader>,
@@ -57,6 +67,10 @@ named!(
         signature_2: call!(nom::le_u32) >>
         flags: call!(nom::le_u32) >>
         version: call!(nom::le_u32) >>
+        master_seed: take_u8_16 >>
+        enc_iv: take_u8_16 >>
+        group_count: call!(nom::le_u32) >>
+        entry_count: call!(nom::le_u32) >>
         ({
             debug!("signature_1: {:x}, signature_2: {:x}, flags: {:x}, version: {:x}",
                    signature_1,
@@ -68,6 +82,10 @@ named!(
                 signature_2: signature_2,
                 flags: flags,
                 version: version,
+                master_seed: master_seed,
+                enc_iv: enc_iv,
+                group_count: group_count,
+                entry_count: entry_count,
             }
         }))
 );
@@ -95,6 +113,23 @@ pub fn parse_kdb_file(bytes: &[u8]) -> Result<KdbFile, Error> {
                     ),
                 });
             }
+            // kdb has three versions, and we support newest one for now...
+            // 0x00020000 -> v2
+            // 0x00020001 -> v2
+            // 0x00030004 -> current
+            // 0x00010002 -> v1
+            // ...
+            let file_ver_major = f.header.version >> 16;
+            let file_ver_minor = f.header.version & 0x0000FFFF;
+            debug!("Major version: {}, minor version: {}",
+                   file_ver_major,
+                   file_ver_minor);
+            if file_ver_major < 3 {
+                return Err(Error {
+                    desc: format!("Unsupported DB version {}.{}", file_ver_major, file_ver_minor),
+                })
+            }
+            debug!("Group count: {}, entry count: {}", f.header.group_count, f.header.entry_count);
             Ok(f)
         }
         nom::IResult::Error(e) => {
