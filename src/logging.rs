@@ -3,9 +3,9 @@
 
 use std::env;
 
-use log::LogRecord;
-use log::LogLevelFilter;
 use env_logger::LogBuilder;
+use log::LogLevelFilter;
+use log::LogRecord;
 use time;
 
 /// Does not return error, instead just panics on error.
@@ -28,4 +28,3 @@ pub fn env_logger_init() {
     }
     builder.init().expect("Failed to initialize env_logger");
 }
-

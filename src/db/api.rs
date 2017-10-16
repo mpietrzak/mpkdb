@@ -21,6 +21,4 @@ impl std::error::Error for Error {
 }
 
 /// What our app can handle as the password db.
-pub trait PasswordDatabase: std::fmt::Debug {
-}
-
+pub trait PasswordDatabase: std::fmt::Debug {}

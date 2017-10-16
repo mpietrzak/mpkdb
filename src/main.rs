@@ -1,15 +1,15 @@
 
 extern crate env_logger;
+extern crate gtk;
 #[macro_use]
 extern crate log;
 #[macro_use]
 extern crate nom;
+extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde;
-extern crate toml;
 extern crate time;
-extern crate gtk;
+extern crate toml;
 
 mod config;
 mod db;
@@ -21,8 +21,8 @@ mod ui;
 use std::sync::Arc;
 use std::sync::RwLock;
 
-use gtk::prelude::*;
 use gtk::{Window, WindowType};
+use gtk::prelude::*;
 
 fn main() {
     logging::env_logger_init();
@@ -32,7 +32,7 @@ fn main() {
         return;
     }
     let _conf = config::load_config().expect("Error loading config");
-    let state = Arc::new(RwLock::new(model::State{db: None}));
+    let state = Arc::new(RwLock::new(model::State { db: None }));
     let state_clone = Arc::clone(&state);
     let window = Window::new(WindowType::Toplevel);
     window.set_title("mpkdb");

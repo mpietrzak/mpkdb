@@ -1,8 +1,8 @@
 
 //! Part of the UI to locate and open files.
 
-use gtk::prelude::*;
 use gtk;
+use gtk::prelude::*;
 
 pub fn init_open_file_ui<F: Fn(String) + 'static>(window: &gtk::Window, old_filename: Option<&str>, callback: F) {
     let current_file_label = gtk::Label::new("");
@@ -17,11 +17,14 @@ pub fn init_open_file_ui<F: Fn(String) + 'static>(window: &gtk::Window, old_file
             debug!("init_open_file_ui: Choose file button clicked: {:?}", x);
             let dialog = gtk::FileChooserDialog::new(None, Some(&parent), gtk::FileChooserAction::Open);
             dialog.add_buttons(&[
-                               ("Cancel", gtk::ResponseType::Cancel.into()),
-                               ("Open", gtk::ResponseType::Ok.into()),
+                ("Cancel", gtk::ResponseType::Cancel.into()),
+                ("Open", gtk::ResponseType::Ok.into()),
             ]);
             let result = dialog.run();
-            debug!("init_open_file_ui: Result of running file chooser dialog: {:?}", result);
+            debug!(
+                "init_open_file_ui: Result of running file chooser dialog: {:?}",
+                result
+            );
             let filename = dialog.get_filename();
             dialog.destroy();
             debug!("init_open_file_ui: File: {:?}", filename);
@@ -30,8 +33,7 @@ pub fn init_open_file_ui<F: Fn(String) + 'static>(window: &gtk::Window, old_file
                     current_file_label_clone.set_text(&filename.to_string_lossy());
                     open_btn_clone.set_sensitive(true);
                 }
-                None => {
-                }
+                None => {}
             }
         });
         let b = gtk::Box::new(gtk::Orientation::Horizontal, 0);
@@ -53,12 +55,10 @@ pub fn init_open_file_ui<F: Fn(String) + 'static>(window: &gtk::Window, old_file
     }
     {
         let current_file_label_clone = current_file_label.clone();
-        open_btn.connect_clicked(move |_| {
-            match current_file_label_clone.get_text() {
-                Some(p) => callback(p),
-                None => {
-                    warn!("No text in label, can't open file");
-                }
+        open_btn.connect_clicked(move |_| match current_file_label_clone.get_text() {
+            Some(p) => callback(p),
+            None => {
+                warn!("No text in label, can't open file");
             }
         });
     }
@@ -69,4 +69,3 @@ pub fn init_open_file_ui<F: Fn(String) + 'static>(window: &gtk::Window, old_file
     window.show_all();
     debug!("init_open_file_ui: Done");
 }
-

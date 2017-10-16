@@ -9,11 +9,10 @@ use toml;
 /// My error struct.
 #[derive(Debug)]
 pub struct Error {
-    desc: String
+    desc: String,
 }
 
-pub trait ErrorChain: std::error::Error {
-}
+pub trait ErrorChain: std::error::Error {}
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -24,7 +23,7 @@ impl fmt::Display for Error {
 impl Error {
     pub fn new(desc: &str) -> Error {
         Error {
-            desc: String::from(desc)
+            desc: String::from(desc),
         }
     }
 }
@@ -36,14 +35,14 @@ impl std::error::Error for Error {
 }
 
 impl<E> std::convert::From<E> for Error
-    where E: std::marker::Sized + std::error::Error + ErrorChain {
-        fn from(e: E) -> Error{
-            Error::new(&format!("{}", e))
-        }
+where
+    E: std::marker::Sized + std::error::Error + ErrorChain,
+{
+    fn from(e: E) -> Error {
+        Error::new(&format!("{}", e))
+    }
 }
 
-impl ErrorChain for std::io::Error {
-}
+impl ErrorChain for std::io::Error {}
 
-impl ErrorChain for toml::de::Error {
-}
+impl ErrorChain for toml::de::Error {}

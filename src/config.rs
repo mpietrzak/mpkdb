@@ -1,6 +1,6 @@
+use std;
 use std::fs::File;
 use std::io::Read;
-use std;
 
 use toml;
 
@@ -20,12 +20,15 @@ pub fn load_config() -> Result<Config, errors::Error> {
             file.read_to_string(&mut contents)?;
             let conf: Config = toml::from_str(&contents)?;
             conf
-        },
+        }
         Err(ref e) if e.kind() == std::io::ErrorKind::NotFound => {
-            debug!("Config file \"{}\" not found, returning default config", path);
+            debug!(
+                "Config file \"{}\" not found, returning default config",
+                path
+            );
             Default::default()
-        },
-        Err(e) => return Err(errors::Error::from(e))
+        }
+        Err(e) => return Err(errors::Error::from(e)),
     };
     Ok(conf)
 }
