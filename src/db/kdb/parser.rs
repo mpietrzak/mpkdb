@@ -10,6 +10,8 @@ const PWM_DBSIG_2: u32 = 0xB54BFB65;
 // const PWM_DBSIG_1_KDBX_P: u32 = 0x9AA2D903;
 // const PWM_DBSIG_1_KDBX_R: u32 = 0x9AA2D903;
 // const PWM_DBVER_DW: u32 = 0x00030004;
+const PWM_FLAG_RIJNDAEL: u32 = 2;
+const PWM_FLAG_TWOFISH: u32 = 8;
 
 /*
 55:#define PWM_DBSIG_1_KDBX_P 0x9AA2D903
@@ -33,6 +35,12 @@ impl std::error::Error for Error {
     fn description(&self) -> &str {
         &self.desc
     }
+}
+
+#[derive(Debug)]
+enum EncryptionAlgorithm {
+    AES,
+    TwoFish
 }
 
 /// KDB password file header structure.
@@ -164,6 +172,18 @@ pub fn parse_kdb_file(bytes: &[u8]) -> Result<KdbFile, Error> {
                 f.header.group_count,
                 f.header.entry_count
             );
+            let enc_algo = {
+                if f.header.flags & PWM_FLAG_RIJNDAEL != 0 {
+                    EncryptionAlgorithm::AES
+                } else if f.header.flags & PWM_FLAG_TWOFISH != 0 {
+                    EncryptionAlgorithm::TwoFish
+                } else {
+                    return Err(Error {
+                        desc: format!("Unknown encryption algorithm, flags: {:x}", f.header.flags),
+                    });
+                }
+            };
+            debug!("Encryption algorithm: {:?}", enc_algo);
             Ok(f)
         }
         nom::IResult::Error(e) => {
