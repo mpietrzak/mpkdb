@@ -8,7 +8,8 @@ use log::LogLevelFilter;
 use log::LogRecord;
 use time;
 
-/// Does not return error, instead just panics on error.
+/// Does not return error, instead just panics on error,
+/// since logging is pretty essential.
 pub fn env_logger_init() {
     let format = |record: &LogRecord| {
         let t = time::now();

@@ -12,6 +12,8 @@ pub struct Error {
     desc: String,
 }
 
+/// My mini error chain helper, marker trait.
+/// Things that implement error chain can be converted to my error type.
 pub trait ErrorChain: std::error::Error {}
 
 impl fmt::Display for Error {
@@ -34,6 +36,9 @@ impl std::error::Error for Error {
     }
 }
 
+/// Generic impl of convert from things marked by my ErrorChain trait.
+/// TODO: Investigate error chain crate (again).
+/// TODO: Maybe do something with Error::cause (although for now I didn't really need it so... investigate benefits first).
 impl<E> std::convert::From<E> for Error
 where
     E: std::marker::Sized + std::error::Error + ErrorChain,

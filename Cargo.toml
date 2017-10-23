@@ -7,10 +7,12 @@ authors = ["Maciej Pietrzak"]
 env_logger = "^0.4.3"
 log = "^0.3.0"
 nom = "^3.2"
+rust-crypto = "^0.2.36"
 serde = "^1.0"
 serde_derive = "^1.0"
 time = "^0.1"
 toml = "^0.4"
+uuid = "^0.5"
 
 [dependencies.gtk]
 version = "0.2.0"

@@ -8,7 +8,7 @@ pub fn init_open_file_ui<F: Fn(String) + 'static>(window: &gtk::Window, old_file
     let current_file_label = gtk::Label::new("");
     let open_btn = gtk::Button::new_with_label("Open");
     let file_box = {
-        // This clones will be moved to closure...
+        // These clones will be moved to closure...
         let current_file_label_clone = current_file_label.clone();
         let open_btn_clone = open_btn.clone();
         let button_choose_file = gtk::Button::new_with_label("Choose...");

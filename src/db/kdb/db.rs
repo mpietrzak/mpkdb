@@ -12,9 +12,18 @@ pub struct KdbDatabase {
     file: kdb::parser::KdbFile,
 }
 
-impl api::PasswordDatabase for KdbDatabase {}
+impl api::PasswordDatabase for KdbDatabase {
+    fn get_entry_count(&self) -> u32 {
+        let s = self.file.entries.len();
+        if s > (u32::max_value() as usize) {
+            // Shouldn't happen, we should not support files that big.
+            panic!("Too many entries")
+        }
+        self.file.entries.len() as u32
+    }
+}
 
-pub fn open(filename: &str) -> Result<KdbDatabase, api::Error> {
+pub fn open(filename: &str, password: &str) -> Result<KdbDatabase, api::Error> {
     debug!("open: About to open \"{}\"...", filename);
     let file = match std::fs::File::open(filename) {
         Ok(file) => file,
@@ -31,7 +40,7 @@ pub fn open(filename: &str) -> Result<KdbDatabase, api::Error> {
             desc: format!("Error reading file: {}", e),
         });
     }
-    let kdb_file = match kdb::parser::parse_kdb_file(&buffer) {
+    let kdb_file = match kdb::parser::parse_kdb_file(&buffer, password) {
         Ok(f) => f,
         Err(e) => {
             return Err(api::Error {

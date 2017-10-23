@@ -1,3 +1,6 @@
+
+//! App config.
+
 use std;
 use std::fs::File;
 use std::io::Read;
